@@ -1,3 +1,7 @@
+$("#test").html("wow");
+
+
+
 let lastOpenedPost = null; // 마지막으로 열린 글 저장
 
 function addPost() {
@@ -56,3 +60,6 @@ function copyToClipboard(text) {
         alert("복사하는데 오류가 발생했습니다.");
     });
 }
+
+
+
