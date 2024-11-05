@@ -7,31 +7,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h2>회원가입 및 로그인</h2>
+<h1>글 공유 사이트</h1>
+<div id="loginSection">
+    <p id="welcomeMessage"></p>
+    <button onclick="logout()">로그아웃</button>
+</div>
 
-<!-- 회원가입 폼 -->
-<form id="registerForm">
-    <label for="newUsername">아이디:</label>
-    <input type="text" id="newUsername" name="newUsername" required><br><br>
-    <label for="newPassword">비밀번호:</label>
-    <input type="password" id="newPassword" name="newPassword" required><br><br>
-    <button type="button" onclick="register()">회원가입</button>
-</form>
-<p id="registerStatus"></p>
-
-<!-- 로그인 폼 -->
-<form id="loginForm">
-    <label for="username">아이디:</label>
-    <input type="text" id="username" name="username" required><br><br>
-    <label for="password">비밀번호:</label>
-    <input type="password" id="password" name="password" required><br><br>
-    <button type="button" onclick="login()">로그인</button>
-</form>
-<p id="loginStatus"></p>
-
-<!-- 글 작성 및 공유 -->
 <div class="container">
-    <h1>글 공유 사이트</h1>
     <input type="text" id="userId" placeholder="아이디를 입력하세요..." disabled />
     <textarea id="textInput" placeholder="여기에 글을 입력하세요..."></textarea><br>
     <button onclick="addPost()">글 공유하기</button>
@@ -39,9 +21,53 @@
     <div class="output" id="outputArea"></div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-        crossorigin="anonymous"></script>
 <script src="index.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const loggedInUser = localStorage.getItem("loggedInUser");
+        const welcomeMessage = document.getElementById("welcomeMessage");
+
+        if (!loggedInUser) {
+            alert("로그인이 필요합니다.");
+            window.location.href = "auth.html"; // 로그인 페이지로 이동
+        } else {
+            welcomeMessage.textContent = `${loggedInUser}님, 환영합니다!`;
+            document.getElementById("userId").value = loggedInUser; // 아이디 필드에 로그인된 사용자 이름 표시
+        }
+    });
+
+    function logout() {
+        localStorage.removeItem("loggedInUser");
+        window.location.href = "auth.html"; // 로그아웃 후 로그인 페이지로 이동
+    }
+
+    function addPost() {
+        const loggedInUser = localStorage.getItem("loggedInUser");
+        const textInput = document.getElementById("textInput").value;
+
+        if (!loggedInUser) {
+            alert("로그인이 필요합니다.");
+            window.location.href = "auth.html"; // 로그인 페이지로 이동
+            return;
+        }
+
+        if (textInput.trim() === "") {
+            alert("글을 입력해주세요.");
+            return;
+        }
+
+        const outputArea = document.getElementById("outputArea");
+        const postDiv = document.createElement("div");
+        postDiv.className = "post";
+
+        postDiv.innerHTML = `
+                <p class="author">${loggedInUser}</p>
+                <div class="content">${textInput}</div>
+            `;
+
+        outputArea.appendChild(postDiv);
+        document.getElementById("textInput").value = ""; // 입력란 초기화
+    }
+</script>
 </body>
 </html>

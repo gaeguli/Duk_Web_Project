@@ -77,6 +77,7 @@ function login() {
     const storedPassword = localStorage.getItem("password");
 
     if (username === storedUsername && password === storedPassword) {
+
         loginStatus.textContent = "로그인 성공!";
         loginStatus.style.color = "green";
         currentUser = username; // 로그인한 사용자 이름을 저장
