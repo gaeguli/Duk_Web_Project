@@ -95,13 +95,13 @@
 </head>
 <body>
 <header>
-    <p>대충 로고</p>
+    <h2 onclick="reload()">커뮤니티</h2>
     <div class="hamburger-menu" onclick="toggleMenu()">☰</div>
 </header>
 
 <nav id="menu" class="menu">
     <ul>
-        <li><a href="index.html" onclick="history.go(0);">홈</a></li>
+        <li><a href="index.html" onclick="reload()">홈</a></li>
         <li><a href="#">내 페이지</a></li>
         <li><a href="login.html">로그인</a></li>
         <li><a href="login.html">회원가입</a></li>
@@ -225,6 +225,10 @@
     function logout() {
         localStorage.removeItem("loggedInUser");
         window.location.href = "login.html"; // 로그아웃 후 로그인 페이지로 이동
+    }
+
+    function reload() {
+        window.location.href = "index.html";
     }
 
 
