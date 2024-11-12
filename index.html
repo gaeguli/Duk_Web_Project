@@ -1,28 +1,206 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>글 공유 사이트</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Title</title>
+    <link rel="stylesheet" href="testcss.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        input, textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .output {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px; /* 박스 간격 */
+        }
+        .post {
+            flex: 1 1 45%; /* 가로로 두 개씩 배치 */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f1f1f1;
+            cursor: pointer;
+            position: relative; /* 버튼 위치 조정을 위해 */
+        }
+        .post .author {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #007BFF;
+            margin-bottom: 5px;
+        }
+        .content {
+            display: -webkit-box; /* flexbox를 사용한 다중 행 텍스트 표시 */
+            display: box;
+            -webkit-box-orient: vertical; /* flexbox 방향 설정 */
+            -webkit-line-clamp: 5; /* 줄 수 제한 (여기서 5줄) */
+            overflow: hidden; /* 넘치는 내용 숨김 */
+            padding: 10px;
+            background-color: #fff; /* 글 내용 배경 */
+            border-radius: 4px;
+            margin-top: 5px;
+            white-space: pre-wrap; /* 줄바꿈을 유지하도록 설정 */
+            transition: max-height 0.3s ease; /* 부드러운 전환 효과 */
+        }
+        .content.expanded {
+            display: block; /* 확대 시 block으로 표시 */
+            max-height: 500px; /* 확대 시 최대 높이 */
+        }
+        .copy-button {
+            margin-top: 10px; /* 버튼 위쪽 공간 */
+            padding: 5px 10px; /* 버튼 크기 조정 */
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: none; /* 기본적으로 숨김 */
+        }
+    </style>
 </head>
 <body>
-<h1>코드 공유 사이트</h1>
-<div id="loginSection">
-    <p id="welcomeMessage"></p>
-    <button onclick="logout()">로그아웃</button>
-</div>
+<header>
+    <p>대충 로고</p>
+    <div class="hamburger-menu" onclick="toggleMenu()">☰</div>
+</header>
 
-<div class="container">
-    <input type="text" id="userId" placeholder="아이디를 입력하세요..." disabled />
-    <textarea id="textInput" placeholder="여기에 글을 입력하세요..."></textarea><br>
-    <button onclick="addPost()">코드 공유하기</button>
-    <h2>목록</h2>
-    <div class="output" id="outputArea"></div>
-</div>
+<nav id="menu" class="menu">
+    <ul>
+        <li><a href="index.html" onclick="history.go(0);">홈</a></li>
+        <li><a href="#">내 페이지</a></li>
+        <li><a href="auth.html">로그인</a></li>
+        <li><a href="auth.html">회원가입</a></li>
+        <li><a onclick="logout()">로그아웃</a></li>
+<!--        <div id="loginSection">-->
 
-<!--<script src="index.js"></script>-->
+<!--        <button onclick="logout()">로그아웃</button>-->
+    </div>
+    </ul>
+</nav>
+
+<main>
+    <article>
+        <p id="welcomeMessage"></p>
+        <div class="container">
+            <h1>코드 공유 사이트</h1>
+            <input type="text" id="userId" placeholder="아이디를 입력하세요..." disabled />
+            <textarea id="textInput" placeholder="여기에 글을 입력하세요..."></textarea><br>
+            <button onclick="addPost()">코드 공유하기</button>
+
+            <h2>목록</h2>
+            <div class="output" id="outputArea"></div>
+        </div>
+    </article>
+</main>
+
+<footer>
+
+</footer>
+
 <script>
+
+    //햄버거 메뉴 열기/닫기
+    function toggleMenu() {
+        const menu = document.getElementById("menu");
+        menu.classList.toggle("active");
+    }
+</script>
+<script>
+    let lastOpenedPost = null; // 마지막으로 열린 글 저장
+
+    function addPost() {
+        const userId = document.getElementById('userId').value;
+        const textInput = document.getElementById('textInput').value;
+
+        if (userId.trim() === "") {
+            alert("아이디를 입력해주세요.");
+            return;
+        }
+        if (textInput.trim() === "") {
+            alert("글을 입력해주세요.");
+            return;
+        }
+
+        const outputArea = document.getElementById('outputArea');
+        const postDiv = document.createElement('div');
+        postDiv.className = 'post';
+
+        postDiv.innerHTML = `
+                <p class="author">${userId}</p>
+                <div class="content">${textInput}</div>
+                <button class="copy-button" onclick="copyToClipboard('${textInput}'); event.stopPropagation();">복사</button>
+            `;
+
+        // 클릭 이벤트 추가
+        postDiv.onclick = function() {
+            const contentDiv = postDiv.querySelector('.content');
+            const copyButton = postDiv.querySelector('.copy-button');
+
+            // 이전에 열린 글이 있다면 숨김
+            if (lastOpenedPost && lastOpenedPost !== contentDiv) {
+                lastOpenedPost.classList.remove('expanded'); // 이전 글 축소
+                lastOpenedPost.parentElement.querySelector('.copy-button').style.display = 'none'; // 복사 버튼 숨김
+            }
+
+            // 현재 클릭한 글 내용 토글
+            contentDiv.classList.toggle('expanded');
+
+            // 복사 버튼 표시
+            copyButton.style.display = contentDiv.classList.contains('expanded') ? 'block' : 'none';
+
+            // 현재 글을 마지막으로 열린 글로 저장
+            lastOpenedPost = contentDiv.classList.contains('expanded') ? contentDiv : null;
+        };
+
+        outputArea.appendChild(postDiv);
+        document.getElementById('userId').value = ""; // 아이디 입력란 초기화
+        document.getElementById('textInput').value = ""; // 입력란 초기화
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert("글이 클립보드에 복사되었습니다.");
+        }).catch(err => {
+            alert("복사하는데 오류가 발생했습니다.");
+        });
+    }
+
+
     document.addEventListener("DOMContentLoaded", () => {
         const loggedInUser = localStorage.getItem("loggedInUser");
         const welcomeMessage = document.getElementById("welcomeMessage");
@@ -35,39 +213,12 @@
             document.getElementById("userId").value = loggedInUser; // 아이디 필드에 로그인된 사용자 이름 표시
         }
     });
-
     function logout() {
         localStorage.removeItem("loggedInUser");
         window.location.href = "auth.html"; // 로그아웃 후 로그인 페이지로 이동
     }
 
-    function addPost() {
-        const loggedInUser = localStorage.getItem("loggedInUser");
-        const textInput = document.getElementById("textInput").value;
 
-        if (!loggedInUser) {
-            alert("로그인이 필요합니다.");
-            window.location.href = "auth.html"; // 로그인 페이지로 이동
-            return;
-        }
-
-        if (textInput.trim() === "") {
-            alert("글을 입력해주세요.");
-            return;
-        }
-
-        const outputArea = document.getElementById("outputArea");
-        const postDiv = document.createElement("div");
-        postDiv.className = "post";
-
-        postDiv.innerHTML = `
-                <p class="author">${loggedInUser}</p>
-                <div class="content">${textInput}</div>
-            `;
-
-        outputArea.appendChild(postDiv);
-        document.getElementById("textInput").value = ""; // 입력란 초기화
-    }
 </script>
 </body>
 </html>
