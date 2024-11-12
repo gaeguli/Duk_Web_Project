@@ -216,7 +216,7 @@
 
         if (!loggedInUser) {
             alert("로그인이 필요합니다.");
-            window.location.href = "auth.html"; // 로그인 페이지로 이동
+            window.location.href = "login.html"; // 로그인 페이지로 이동
         } else {
             welcomeMessage.textContent = `${loggedInUser}님, 환영합니다!`;
             document.getElementById("userId").value = loggedInUser; // 아이디 필드에 로그인된 사용자 이름 표시
@@ -224,7 +224,7 @@
     });
     function logout() {
         localStorage.removeItem("loggedInUser");
-        window.location.href = "auth.html"; // 로그아웃 후 로그인 페이지로 이동
+        window.location.href = "login.html"; // 로그아웃 후 로그인 페이지로 이동
     }
 
 
