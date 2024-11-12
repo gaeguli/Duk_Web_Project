@@ -103,8 +103,8 @@
     <ul>
         <li><a href="index.html" onclick="history.go(0);">홈</a></li>
         <li><a href="#">내 페이지</a></li>
-        <li><a href="auth.html">로그인</a></li>
-        <li><a href="auth.html">회원가입</a></li>
+        <li><a href="login.html">로그인</a></li>
+        <li><a href="login.html">회원가입</a></li>
         <li><a onclick="logout()">로그아웃</a></li>
 <!--        <div id="loginSection">-->
 
@@ -119,8 +119,10 @@
         <div class="container">
             <h1>코드 공유 사이트</h1>
             <input type="text" id="userId" placeholder="아이디를 입력하세요..." disabled />
+            <input type="text" id="titleInput" placeholder="제목을 입력하세요..." /><br><br>
             <textarea id="textInput" placeholder="여기에 글을 입력하세요..."></textarea><br>
             <button onclick="addPost()">코드 공유하기</button>
+
 
             <h2>목록</h2>
             <div class="output" id="outputArea"></div>
@@ -145,10 +147,15 @@
 
     function addPost() {
         const userId = document.getElementById('userId').value;
+        const titleInput = document.getElementById('titleInput').value;
         const textInput = document.getElementById('textInput').value;
 
         if (userId.trim() === "") {
             alert("아이디를 입력해주세요.");
+            return;
+        }
+        if (titleInput.trim() === "") {
+            alert("제목을 입력해주세요.");
             return;
         }
         if (textInput.trim() === "") {
@@ -161,10 +168,11 @@
         postDiv.className = 'post';
 
         postDiv.innerHTML = `
-                <p class="author">${userId}</p>
-                <div class="content">${textInput}</div>
-                <button class="copy-button" onclick="copyToClipboard('${textInput}'); event.stopPropagation();">복사</button>
-            `;
+        <p class="author">${userId}</p>
+        <h3 class="title">${titleInput}</h3>
+        <div class="content">${textInput}</div>
+        <button class="copy-button" onclick="copyToClipboard('${textInput}'); event.stopPropagation();">복사</button>
+    `;
 
         // 클릭 이벤트 추가
         postDiv.onclick = function() {
@@ -188,9 +196,10 @@
         };
 
         outputArea.appendChild(postDiv);
-        document.getElementById('userId').value = ""; // 아이디 입력란 초기화
-        document.getElementById('textInput').value = ""; // 입력란 초기화
+        document.getElementById('titleInput').value = ""; // 제목 입력란 초기화
+        document.getElementById('textInput').value = ""; // 글 입력란 초기화
     }
+
 
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {

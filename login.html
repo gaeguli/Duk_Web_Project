@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인</title>
+</head>
+<body>
+<h2>로그인</h2>
+
+<!-- 로그인 폼 -->
+<div>
+  <form id="loginForm">
+    <label for="username">아이디:</label>
+    <input type="text" id="username" name="username" required><br><br>
+    <label for="password">비밀번호:</label>
+    <input type="password" id="password" name="password" required><br><br>
+    <button type="button" onclick="login()">로그인</button>
+  </form>
+  <p id="loginStatus"></p>
+  <p>계정이 없으신가요? <a href="signin.html">회원가입</a></p>
+</div>
+
+<script>
+  function login() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const loginStatus = document.getElementById("loginStatus");
+
+    const storedUsername = localStorage.getItem("username");
+    const storedPassword = localStorage.getItem("password");
+
+    if (username === storedUsername && password === storedPassword) {
+      loginStatus.textContent = "로그인 성공!";
+      loginStatus.style.color = "green";
+      localStorage.setItem("loggedInUser", username); // 로그인된 사용자 저장
+      window.location.href = "index.html"; // 메인 페이지로 이동
+    } else {
+      loginStatus.textContent = "아이디 또는 비밀번호가 잘못되었습니다.";
+      loginStatus.style.color = "red";
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입</title>
+</head>
+<body>
+<h2>회원가입</h2>
+
+<!-- 회원가입 폼 -->
+<div>
+  <form id="registerForm">
+    <label for="newUsername">아이디:</label>
+    <input type="text" id="newUsername" name="newUsername" required><br><br>
+    <label for="newPassword">비밀번호:</label>
+    <input type="password" id="newPassword" name="newPassword" required><br><br>
+    <button type="button" onclick="register()">회원가입</button>
+  </form>
+  <p id="registerStatus"></p>
+  <p>이미 계정이 있으신가요? <a href="login.html">로그인</a></p>
+</div>
+
+<script>
+  function register() {
+    const newUsername = document.getElementById("newUsername").value;
+    const newPassword = document.getElementById("newPassword").value;
+    const registerStatus = document.getElementById("registerStatus");
+
+    if (newUsername && newPassword) {
+      localStorage.setItem("username", newUsername);
+      localStorage.setItem("password", newPassword);
+      registerStatus.textContent = "회원가입 성공! 로그인 페이지로 이동합니다.";
+      registerStatus.style.color = "green";
+      setTimeout(() => {
+        window.location.href = "login.html"; // 로그인 페이지로 이동
+      }, 2000);
+    } else {
+      registerStatus.textContent = "아이디와 비밀번호를 입력하세요.";
+      registerStatus.style.color = "red";
+    }
+  }
+</script>
+</body>
+</html>
