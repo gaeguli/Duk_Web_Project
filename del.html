@@ -3,71 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>글 공유 사이트</title>
-    <link rel="stylesheet" href="style.css">
+    <title>회원가입</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 350px;
+            background-color: #ffffff;
+            padding: 30px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .input-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        input {
+            font-size: 16px;
+            color: #222222;
+            width: 100%;
+            border: none;
+            border-bottom: solid #aaaaaa 1px;
+            padding: 10px 10px 5px 10px;
+            background: none;
+        }
+
+        input::placeholder { color: #aaaaaa; }
+        input:focus { outline: none; }
+
+        span {
+            display: block;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background-color: #666;
+            width: 0;
+            height: 2px;
+            border-radius: 2px;
+            transition: 0.5s;
+        }
+
+        label {
+            position: absolute;
+            color: #aaa;
+            left: 10px;
+            font-size: 16px;
+            bottom: 10px;
+            transition: all .2s;
+            pointer-events: none;
+        }
+
+        input:focus ~ label, input:valid ~ label {
+            font-size: 12px;
+            bottom: 35px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        input:focus ~ span, input:valid ~ span {
+            width: 100%;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        p {
+            margin-top: 20px;
+        }
+
+        p a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        #loginStatus {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-<h1>코드 공유 사이트</h1>
-<div id="loginSection">
-    <p id="welcomeMessage"></p>
-    <button onclick="logout()">로그아웃</button>
-</div>
-
 <div class="container">
-    <input type="text" id="userId" placeholder="아이디를 입력하세요..." disabled />
-    <textarea id="textInput" placeholder="여기에 글을 입력하세요..."></textarea><br>
-    <button onclick="addPost()">코드 공유하기</button>
-    <h2>목록</h2>
-    <div class="output" id="outputArea"></div>
+    <h2>회원가입</h2>
+    <!-- 로그인 폼 -->
+    <form id="loginForm">
+        <div class="input-container">
+            <input type="text" id="username" name="username" required>
+            <label for="username">아이디</label>
+            <span></span>
+        </div>
+        <div class="input-container">
+            <input type="password" id="password" name="password" required>
+            <label for="password">비밀번호</label>
+            <span></span>
+            <p><a href="del2.html">로그인 창으로</a></p>
+        </div>
+        <button type="button" id="one">회원가입</button>
+    </form>
+    <p id="loginStatus"></p>
+<!--    <p>계정이 없으신가요? <a href="signin.html">회원가입</a></p>-->
 </div>
 
-<!--<script src="index.js"></script>-->
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const loggedInUser = localStorage.getItem("loggedInUser");
-        const welcomeMessage = document.getElementById("welcomeMessage");
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-        if (!loggedInUser) {
-            alert("로그인이 필요합니다.");
-            window.location.href = "auth.html"; // 로그인 페이지로 이동
-        } else {
-            welcomeMessage.textContent = `${loggedInUser}님, 환영합니다!`;
-            document.getElementById("userId").value = loggedInUser; // 아이디 필드에 로그인된 사용자 이름 표시
-        }
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBrCk-lqrYrwGfj1etOLYInGQkl7Mb_LOs",
+        authDomain: "dukwebproject.firebaseapp.com",
+        databaseURL: "https://dukwebproject-default-rtdb.firebaseio.com",
+        projectId: "dukwebproject",
+        storageBucket: "dukwebproject.firebasestorage.app",
+        messagingSenderId: "278975563652",
+        appId: "1:278975563652:web:23800b058e0980ef30ffd1",
+        measurementId: "G-6HNE4ZDK9P"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    // 회원가입 로직
+    document.getElementById("one").addEventListener("click", (event) => {
+        event.preventDefault();
+        const email = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const auth = getAuth();
+
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // 회원가입 성공
+                console.log(userCredential);
+                alert("회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.");
+                window.location.href = "del2.html"; // 로그인 페이지로 리디렉션
+            })
+            .catch((error) => {
+                // 회원가입 실패
+                console.error(error);
+                alert(`회원가입 실패: ${error.message}`);
+            });
     });
-
-    function logout() {
-        localStorage.removeItem("loggedInUser");
-        window.location.href = "auth.html"; // 로그아웃 후 로그인 페이지로 이동
-    }
-
-    function addPost() {
-        const loggedInUser = localStorage.getItem("loggedInUser");
-        const textInput = document.getElementById("textInput").value;
-
-        if (!loggedInUser) {
-            alert("로그인이 필요합니다.");
-            window.location.href = "auth.html"; // 로그인 페이지로 이동
-            return;
-        }
-
-        if (textInput.trim() === "") {
-            alert("글을 입력해주세요.");
-            return;
-        }
-
-        const outputArea = document.getElementById("outputArea");
-        const postDiv = document.createElement("div");
-        postDiv.className = "post";
-
-        postDiv.innerHTML = `
-                <p class="author">${loggedInUser}</p>
-                <div class="content">${textInput}</div>
-            `;
-
-        outputArea.appendChild(postDiv);
-        document.getElementById("textInput").value = ""; // 입력란 초기화
-    }
 </script>
+
 </body>
 </html>

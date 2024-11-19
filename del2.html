@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f9;
+      font-family: Arial, sans-serif;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .container {
+      width: 350px;
+      background-color: #ffffff;
+      padding: 30px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .input-container {
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    input {
+      font-size: 16px;
+      color: #222222;
+      width: 100%;
+      border: none;
+      border-bottom: solid #aaaaaa 1px;
+      padding: 10px 10px 5px 10px;
+      background: none;
+    }
+
+    input::placeholder { color: #aaaaaa; }
+    input:focus { outline: none; }
+
+    span {
+      display: block;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      background-color: #666;
+      width: 0;
+      height: 2px;
+      border-radius: 2px;
+      transition: 0.5s;
+    }
+
+    label {
+      position: absolute;
+      color: #aaa;
+      left: 10px;
+      font-size: 16px;
+      bottom: 10px;
+      transition: all .2s;
+      pointer-events: none;
+    }
+
+    input:focus ~ label, input:valid ~ label {
+      font-size: 12px;
+      bottom: 35px;
+      color: #666;
+      font-weight: bold;
+    }
+
+    input:focus ~ span, input:valid ~ span {
+      width: 100%;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    p {
+      margin-top: 20px;
+    }
+
+    p a {
+      color: #333;
+      text-decoration: none;
+    }
+
+    #loginStatus {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>로그인</h2>
+  <!-- 로그인 폼 -->
+  <form id="loginForm">
+    <div class="input-container">
+      <input type="text" id="username" name="username" required>
+      <label for="username">아이디</label>
+      <span></span>
+    </div>
+    <div class="input-container">
+      <input type="password" id="password" name="password" required>
+      <label for="password">비밀번호</label>
+      <span></span>
+    </div>
+    <button type="button" id="one">로그인</button>
+  </form>
+  <p id="loginStatus"></p>
+      <p>계정이 없으신가요? <a href="del.html">회원가입</a></p>
+</div>
+
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBrCk-lqrYrwGfj1etOLYInGQkl7Mb_LOs",
+    authDomain: "dukwebproject.firebaseapp.com",
+    databaseURL: "https://dukwebproject-default-rtdb.firebaseio.com",
+    projectId: "dukwebproject",
+    storageBucket: "dukwebproject.firebasestorage.app",
+    messagingSenderId: "278975563652",
+    appId: "1:278975563652:web:23800b058e0980ef30ffd1",
+    measurementId: "G-6HNE4ZDK9P"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+
+
+  import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  // document.getElementById("one").addEventListener("click", () => {
+  //   event.preventDefault();
+  //   const email = document.getElementById("username").value;
+  //   const password = document.getElementById("password").value;
+    const auth = getAuth();
+  // //   createUserWithEmailAndPassword(auth, email, password)
+  // //           .then((userCredential) => {
+  // //             console.log(userCredential);
+  // //             // Signed in
+  // //
+  // //             const user = userCredential.user;
+  // //             // ...
+  // //           })
+  // //           .catch((error) => {
+  // //             console.log(error);
+  // //             const errorCode = error.code;
+  // //             const errorMessage = error.message;
+  // //             // ..
+  // //           });
+  // //   console.log(email, password)
+  // // })
+  document.getElementById("one").addEventListener("click", (event) => {
+    event.preventDefault(); // 기본 폼 동작 방지
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    if (!username || !password) {
+      alert("아이디와 비밀번호를 입력하세요.");
+      return;
+    }
+
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, username, password)
+            .then((userCredential) => {
+              // 로그인 성공
+              const user = userCredential.user;
+              alert("로그인 성공!");
+              console.log("User info:", user);
+
+              // 리디렉션 예: 메인 페이지로 이동
+              window.location.href = "index.html"; // main.html 파일로 이동 (필요에 따라 변경)
+            })
+            .catch((error) => {
+              // 로그인 실패
+              console.error("로그인 실패:", error);
+              alert(`로그인 실패: ${error.message}`);
+            });
+  });
+
+
+
+
+  console.log(app)
+
+  document.getElementById("one").addEventListener("click", (event) => {
+    event.preventDefault();
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    signInWithEmailAndPassword(auth, username, password)
+            .then((userCredential) => {
+              // 로그인 성공
+              const user = userCredential.user;
+
+              // 이메일 저장
+              localStorage.setItem("loggedInUser", user.email);
+
+              // 홈 페이지로 이동
+              alert("로그인 성공!");
+              window.location.href = "index.html";
+            })
+            .catch((error) => {
+              console.error(error);
+              alert("로그인 실패: " + error.message);
+            });
+  });
+
+</script>
+</body>
+</html>

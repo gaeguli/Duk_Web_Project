@@ -104,8 +104,8 @@
     <ul>
         <li><a href="index.html" onclick="reload()">홈</a></li>
         <li><a href="#">내 페이지</a></li>
-        <li><a href="login.html">로그인</a></li>
-        <li><a href="login.html">회원가입</a></li>
+        <li><a href="del2.html">로그인</a></li>
+        <li><a href="del.html">회원가입</a></li>
         <li><a onclick="logout()">로그아웃</a></li>
 <!--        <div id="loginSection">-->
 
@@ -144,6 +144,7 @@
     }
 </script>
 <script>
+    // 기존 script 시작
     let lastOpenedPost = null; // 마지막으로 열린 글 저장
 
     function addPost() {
@@ -180,27 +181,20 @@
             const contentDiv = postDiv.querySelector('.content');
             const copyButton = postDiv.querySelector('.copy-button');
 
-            // 이전에 열린 글이 있다면 숨김
             if (lastOpenedPost && lastOpenedPost !== contentDiv) {
-                lastOpenedPost.classList.remove('expanded'); // 이전 글 축소
-                lastOpenedPost.parentElement.querySelector('.copy-button').style.display = 'none'; // 복사 버튼 숨김
+                lastOpenedPost.classList.remove('expanded');
+                lastOpenedPost.parentElement.querySelector('.copy-button').style.display = 'none';
             }
 
-            // 현재 클릭한 글 내용 토글
             contentDiv.classList.toggle('expanded');
-
-            // 복사 버튼 표시
             copyButton.style.display = contentDiv.classList.contains('expanded') ? 'block' : 'none';
-
-            // 현재 글을 마지막으로 열린 글로 저장
             lastOpenedPost = contentDiv.classList.contains('expanded') ? contentDiv : null;
         };
 
         outputArea.appendChild(postDiv);
-        document.getElementById('titleInput').value = ""; // 제목 입력란 초기화
-        document.getElementById('textInput').value = ""; // 글 입력란 초기화
+        document.getElementById('titleInput').value = "";
+        document.getElementById('textInput').value = "";
     }
-
 
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {
@@ -210,29 +204,32 @@
         });
     }
 
-
+    // 새로 추가된 코드
     document.addEventListener("DOMContentLoaded", () => {
         const loggedInUser = localStorage.getItem("loggedInUser");
         const welcomeMessage = document.getElementById("welcomeMessage");
 
         if (!loggedInUser) {
+            // 로그인 정보가 없는 경우 로그인 페이지로 리다이렉트
             alert("로그인이 필요합니다.");
-            window.location.href = "login.html"; // 로그인 페이지로 이동
+            window.location.href = "del2.html";
         } else {
-            welcomeMessage.textContent = `${loggedInUser}님, 환영합니다!`;
-            document.getElementById("userId").value = loggedInUser; // 아이디 필드에 로그인된 사용자 이름 표시
+            // 이메일의 로컬 부분(@ 앞 부분)을 추출하여 표시
+            const localPart = loggedInUser.split('@')[0];
+            welcomeMessage.textContent = `${localPart}님, 환영합니다!`;
+            document.getElementById("userId").value = localPart;
         }
     });
+
     function logout() {
         localStorage.removeItem("loggedInUser");
-        window.location.href = "login.html"; // 로그아웃 후 로그인 페이지로 이동
+        window.location.href = "del2.html"; // 로그아웃 후 로그인 페이지로 이동
     }
 
     function reload() {
         window.location.href = "index.html";
     }
-
-
 </script>
+
 </body>
 </html>
