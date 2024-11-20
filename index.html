@@ -82,6 +82,88 @@
             cursor: pointer;
             display: none;
         }
+             /* 글 작성 버튼 */
+         .write-button {
+             position: fixed;
+             bottom: 20px;
+             right: 20px;
+             background-color: #007BFF;
+             color: white;
+             border: none;
+             border-radius: 50%;
+             width: 60px;
+             height: 60px;
+             font-size: 24px;
+             cursor: pointer;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+             transition: background-color 0.3s ease;
+         }
+
+        .write-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 글 작성 팝업 */
+        .write-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 400px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none; /* 기본적으로 숨김 */
+        }
+
+        .write-popup {
+            display: none;
+        }
+
+        .write-popup.show {
+            display: block;
+        }
+
+
+        .write-popup-content {
+            padding: 20px;
+        }
+
+        .write-popup .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .write-popup input, .write-popup textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .write-popup button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .write-popup button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
     </style>
 </head>
 <body>
@@ -105,10 +187,29 @@
         <p id="welcomeMessage"></p>
         <div class="container">
             <h1>글 공유 사이트</h1>
-            <input type="text" id="userId" placeholder="아이디를 입력하세요..." disabled />
-            <input type="text" id="titleInput" placeholder="제목을 입력하세요..." /><br><br>
-            <textarea id="textInput" placeholder="여기에 글을 입력하세요..."></textarea><br>
-            <button onclick="addPost()">글 공유하기</button>
+            <!-- 글 작성 버튼 -->
+            <!-- 글쓰기 팝업 -->
+            <!-- 글 작성 버튼 -->
+            <button id="writeButton" class="write-button" onclick="toggleWritePopup()">+</button>
+
+            <!-- 글쓰기 팝업 -->
+            <div id="writePopup" class="write-popup hidden">
+                <div class="write-popup-content">
+                    <span class="close-button" onclick="toggleWritePopup()">×</span>
+                    <h2>글 작성</h2>
+                    <input type="text" id="userId" placeholder="아이디를 입력하세요..." disabled />
+                    <input type="text" id="titleInput" placeholder="제목을 입력하세요..." />
+                    <textarea id="textInput" placeholder="내용을 입력하세요..."></textarea>
+                    <button onclick="addPost()">등록</button>
+                </div>
+            </div>
+
+
+
+            <!--            <input type="text" id="userId" placeholder="아이디를 입력하세요..." disabled />-->
+<!--            <input type="text" id="titleInput" placeholder="제목을 입력하세요..." /><br><br>-->
+<!--            <textarea id="textInput" placeholder="여기에 글을 입력하세요..."></textarea><br>-->
+<!--            <button onclick="addPost()">글 공유하기</button>-->
 
             <h2>목록</h2>
             <div class="output" id="outputArea"></div>
@@ -239,6 +340,54 @@
             alert("복사 실패: " + err.message);
         });
     }
+    // function toggleWritePopup() {
+    //     const popup = document.getElementById('writePopup');
+    //     popup.classList.toggle('show');
+    // }
+
+
+    function submitPost() {
+        const userId = document.getElementById('userId').value;
+        const titleInput = document.getElementById('popupTitleInput').value;
+        const textInput = document.getElementById('popupTextInput').value;
+
+        if (!userId || !titleInput || !textInput) {
+            alert("모든 필드를 채워주세요!");
+            return;
+        }
+
+        const postData = {
+            userId,
+            title: titleInput,
+            content: textInput,
+            timestamp: Date.now(),
+        };
+
+        const postsRef = ref(db, 'posts');
+        push(postsRef, postData)
+            .then(() => {
+                alert("글이 성공적으로 저장되었습니다.");
+
+                // 팝업 창 닫기 및 입력 필드 초기화
+                toggleWritePopup();
+                document.getElementById('popupTitleInput').value = "";
+                document.getElementById('popupTextInput').value = "";
+            })
+            .catch(error => {
+                alert("글 저장 실패: " + error.message);
+            });
+    }
+
+
+
+
 </script>
+<script>
+    function toggleWritePopup() {
+        const popup = document.getElementById('writePopup');
+        popup.classList.toggle('show');
+    }
+</script>
+
 </body>
 </html>
