@@ -199,25 +199,36 @@
         const outputArea = document.getElementById('outputArea');
         const postsRef = ref(db, 'posts');
 
-        onValue(postsRef, snapshot => {
-            outputArea.innerHTML = "";
+        onValue(postsRef, (snapshot) => {
+            outputArea.innerHTML = ""; // 기존 글 초기화
             const posts = snapshot.val();
+            const postArray = [];
 
+            // 객체를 배열로 변환
             for (const key in posts) {
-                const post = posts[key];
+                postArray.push({ id: key, ...posts[key] });
+            }
+
+            // 최신 글이 위로 오도록 정렬 (timestamp 기준 내림차순)
+            postArray.sort((a, b) => b.timestamp - a.timestamp);
+
+            // 정렬된 글을 화면에 추가
+            postArray.forEach(post => {
                 const postDiv = document.createElement('div');
                 postDiv.className = 'post';
 
                 postDiv.innerHTML = `
-                    <p class="author">${post.userId}</p>
-                    <h3 class="title">${post.title}</h3>
-                    <div class="content">${post.content}</div>
-                    <button class="copy-button" onclick="copyToClipboard('${post.content}'); event.stopPropagation();">복사</button>
-                `;
+                <p class="author">${post.userId}</p>
+                <h3 class="title">${post.title}</h3>
+                <div class="content">${post.content}</div>
+                <button class="copy-button" onclick="copyToClipboard('${post.content}'); event.stopPropagation();">복사</button>
+            `;
+
                 outputArea.appendChild(postDiv);
-            }
+            });
         });
     }
+
 
     document.addEventListener("DOMContentLoaded", fetchPosts);
 
