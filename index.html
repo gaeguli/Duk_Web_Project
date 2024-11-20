@@ -47,16 +47,16 @@
             margin-top: 20px;
             display: flex;
             flex-wrap: wrap;
-            gap: 10px; /* 박스 간격 */
+            gap: 10px;
         }
         .post {
-            flex: 1 1 45%; /* 가로로 두 개씩 배치 */
+            flex: 1 1 45%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
             background-color: #f1f1f1;
             cursor: pointer;
-            position: relative; /* 버튼 위치 조정을 위해 */
+            position: relative;
         }
         .post .author {
             font-weight: bold;
@@ -65,32 +65,22 @@
             margin-bottom: 5px;
         }
         .content {
-            display: -webkit-box; /* flexbox를 사용한 다중 행 텍스트 표시 */
-            /*noinspection CssInvalidPropertyValue*/
-            display: box;
-            -webkit-box-orient: vertical; /* flexbox 방향 설정 */
-            -webkit-line-clamp: 5; /* 줄 수 제한 (여기서 5줄) */
-            overflow: hidden; /* 넘치는 내용 숨김 */
             padding: 10px;
-            background-color: #fff; /* 글 내용 배경 */
+            background-color: #fff;
             border-radius: 4px;
             margin-top: 5px;
-            white-space: pre-wrap; /* 줄바꿈을 유지하도록 설정 */
-            transition: max-height 0.3s ease; /* 부드러운 전환 효과 */
-        }
-        .content.expanded {
-            display: block; /* 확대 시 block으로 표시 */
-            max-height: 500px; /* 확대 시 최대 높이 */
+            white-space: pre-wrap;
+            transition: max-height 0.3s ease;
         }
         .copy-button {
-            margin-top: 10px; /* 버튼 위쪽 공간 */
-            padding: 5px 10px; /* 버튼 크기 조정 */
+            margin-top: 10px;
+            padding: 5px 10px;
             background-color: #28a745;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            display: none; /* 기본적으로 숨김 */
+            display: none;
         }
     </style>
 </head>
@@ -107,10 +97,6 @@
         <li><a href="del2.html">로그인</a></li>
         <li><a href="del.html">회원가입</a></li>
         <li><a onclick="logout()">로그아웃</a></li>
-<!--        <div id="loginSection">-->
-
-<!--        <button onclick="logout()">로그아웃</button>-->
-    </div>
     </ul>
 </nav>
 
@@ -124,112 +110,124 @@
             <textarea id="textInput" placeholder="여기에 글을 입력하세요..."></textarea><br>
             <button onclick="addPost()">코드 공유하기</button>
 
-
             <h2>목록</h2>
             <div class="output" id="outputArea"></div>
         </div>
     </article>
 </main>
 
-<footer>
-
-</footer>
-
 <script>
-
-    //햄버거 메뉴 열기/닫기
+    // 햄버거 메뉴 열기/닫기
     function toggleMenu() {
         const menu = document.getElementById("menu");
         menu.classList.toggle("active");
     }
-</script>
-<script>
-    // 기존 script 시작
-    let lastOpenedPost = null; // 마지막으로 열린 글 저장
 
-    function addPost() {
-        const userId = document.getElementById('userId').value;
-        const titleInput = document.getElementById('titleInput').value;
-        const textInput = document.getElementById('textInput').value;
-
-        if (userId.trim() === "") {
-            alert("아이디를 입력해주세요.");
-            return;
-        }
-        if (titleInput.trim() === "") {
-            alert("제목을 입력해주세요.");
-            return;
-        }
-        if (textInput.trim() === "") {
-            alert("글을 입력해주세요.");
-            return;
-        }
-
-        const outputArea = document.getElementById('outputArea');
-        const postDiv = document.createElement('div');
-        postDiv.className = 'post';
-
-        postDiv.innerHTML = `
-        <p class="author">${userId}</p>
-        <h3 class="title">${titleInput}</h3>
-        <div class="content">${textInput}</div>
-        <button class="copy-button" onclick="copyToClipboard('${textInput}'); event.stopPropagation();">복사</button>
-    `;
-
-        // 클릭 이벤트 추가
-        postDiv.onclick = function() {
-            const contentDiv = postDiv.querySelector('.content');
-            const copyButton = postDiv.querySelector('.copy-button');
-
-            if (lastOpenedPost && lastOpenedPost !== contentDiv) {
-                lastOpenedPost.classList.remove('expanded');
-                lastOpenedPost.parentElement.querySelector('.copy-button').style.display = 'none';
-            }
-
-            contentDiv.classList.toggle('expanded');
-            copyButton.style.display = contentDiv.classList.contains('expanded') ? 'block' : 'none';
-            lastOpenedPost = contentDiv.classList.contains('expanded') ? contentDiv : null;
-        };
-
-        outputArea.appendChild(postDiv);
-        document.getElementById('titleInput').value = "";
-        document.getElementById('textInput').value = "";
-    }
-
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert("글이 클립보드에 복사되었습니다.");
-        }).catch(err => {
-            alert("복사하는데 오류가 발생했습니다.");
-        });
-    }
-
-    // 새로 추가된 코드
-    document.addEventListener("DOMContentLoaded", () => {
-        const loggedInUser = localStorage.getItem("loggedInUser");
-        const welcomeMessage = document.getElementById("welcomeMessage");
-
-        if (!loggedInUser) {
-            // 로그인 정보가 없는 경우 로그인 페이지로 리다이렉트
-            alert("로그인이 필요합니다.");
-            window.location.href = "del2.html";
-        } else {
-            // 이메일의 로컬 부분(@ 앞 부분)을 추출하여 표시
-            const localPart = loggedInUser.split('@')[0];
-            welcomeMessage.textContent = `${localPart}님, 환영합니다!`;
-            document.getElementById("userId").value = localPart;
-        }
-    });
-
+    // 로그아웃 및 페이지 리로드
     function logout() {
         localStorage.removeItem("loggedInUser");
-        window.location.href = "del2.html"; // 로그아웃 후 로그인 페이지로 이동
+        window.location.href = "del2.html";
     }
 
     function reload() {
         window.location.href = "index.html";
     }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const loggedInUser = localStorage.getItem("loggedInUser");
+        const welcomeMessage = document.getElementById("welcomeMessage");
+
+        if (!loggedInUser) {
+            alert("로그인이 필요합니다.");
+            window.location.href = "del2.html";
+        } else {
+            const localPart = loggedInUser.split('@')[0];
+            welcomeMessage.textContent = `${localPart}님, 환영합니다!`;
+            document.getElementById("userId").value = localPart;
+        }
+    });
 </script>
 
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBrCk-lqrYrwGfj1etOLYInGQkl7Mb_LOs",
+        authDomain: "dukwebproject.firebaseapp.com",
+        databaseURL: "https://dukwebproject-default-rtdb.firebaseio.com",
+        projectId: "dukwebproject",
+        storageBucket: "dukwebproject.firebasestorage.app",
+        messagingSenderId: "278975563652",
+        appId: "1:278975563652:web:23800b058e0980ef30ffd1",
+        measurementId: "G-6HNE4ZDK9P"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.addPost = function addPost() {
+        const userId = document.getElementById('userId').value;
+        const titleInput = document.getElementById('titleInput').value;
+        const textInput = document.getElementById('textInput').value;
+
+        if (!userId || !titleInput || !textInput) {
+            alert("모든 필드를 채워주세요!");
+            return;
+        }
+
+        const postData = {
+            userId,
+            title: titleInput,
+            content: textInput,
+            timestamp: Date.now(),
+        };
+
+        const postsRef = ref(db, 'posts');
+        push(postsRef, postData)
+            .then(() => {
+                alert("글이 성공적으로 저장되었습니다.");
+                document.getElementById('titleInput').value = "";
+                document.getElementById('textInput').value = "";
+            })
+            .catch(error => {
+                alert("글 저장 실패: " + error.message);
+            });
+    };
+
+    function fetchPosts() {
+        const outputArea = document.getElementById('outputArea');
+        const postsRef = ref(db, 'posts');
+
+        onValue(postsRef, snapshot => {
+            outputArea.innerHTML = "";
+            const posts = snapshot.val();
+
+            for (const key in posts) {
+                const post = posts[key];
+                const postDiv = document.createElement('div');
+                postDiv.className = 'post';
+
+                postDiv.innerHTML = `
+                    <p class="author">${post.userId}</p>
+                    <h3 class="title">${post.title}</h3>
+                    <div class="content">${post.content}</div>
+                    <button class="copy-button" onclick="copyToClipboard('${post.content}'); event.stopPropagation();">복사</button>
+                `;
+                outputArea.appendChild(postDiv);
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchPosts);
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert("글이 클립보드에 복사되었습니다.");
+        }).catch(err => {
+            alert("복사 실패: " + err.message);
+        });
+    }
+</script>
 </body>
 </html>

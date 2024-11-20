@@ -175,11 +175,19 @@
                 window.location.href = "del2.html"; // 로그인 페이지로 리디렉션
             })
             .catch((error) => {
-                // 회원가입 실패
-                console.error(error);
-                alert(`회원가입 실패: ${error.message}`);
+                // 에러 처리
+                if (error.code === 'auth/email-already-in-use') {
+                    alert('이미 사용 중인 이메일 주소입니다. 다른 이메일을 사용하세요.');
+                } else if (error.code === 'auth/invalid-email') {
+                    alert('유효하지 않은 이메일 주소입니다.');
+                } else if (error.code === 'auth/weak-password') {
+                    alert('비밀번호는 6자 이상이어야 합니다.');
+                } else {
+                    alert(`회원가입 실패: ${error.message}`);
+                }
             });
     });
+
 </script>
 
 </body>
