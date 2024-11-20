@@ -49,8 +49,12 @@
             flex-wrap: wrap;
             gap: 10px;
         }
+        .output {
+            display: block; /* 플렉스 스타일 제거 */
+        }
         .post {
-            flex: 1 1 45%;
+            display: block; /* 블록 요소로 설정 */
+            margin-bottom: 10px; /* 글 간 간격 추가 */
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -58,12 +62,7 @@
             cursor: pointer;
             position: relative;
         }
-        .post .author {
-            font-weight: bold;
-            font-size: 1.2em;
-            color: #007BFF;
-            margin-bottom: 5px;
-        }
+
         .content {
             padding: 10px;
             background-color: #fff;
