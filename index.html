@@ -174,7 +174,7 @@
 <nav id="menu" class="menu">
     <ul>
         <li><a href="index.html" onclick="reload()">홈</a></li>
-        <li><a href="#">내 페이지</a></li>
+        <li><a href="userpage.html">내 페이지</a></li>
         <li><a href="del2.html">로그인</a></li>
         <li><a href="del.html">회원가입</a></li>
         <li><a onclick="logout()">로그아웃</a></li>
@@ -295,6 +295,17 @@
             });
     };
 
+
+    function escapeHTML(str) {
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
     function fetchPosts() {
         const outputArea = document.getElementById('outputArea');
         const postsRef = ref(db, 'posts');
@@ -318,14 +329,15 @@
                 postDiv.className = 'post';
 
                 postDiv.innerHTML = `
-                <p class="author">${post.userId}</p>
-                <h3 class="title">${post.title}</h3>
-                <div class="content">${post.content}</div>
-                <button class="copy-button" onclick="copyToClipboard('${post.content}'); event.stopPropagation();">복사</button>
-            `;
+        <p class="author">${escapeHTML(post.userId)}</p>
+        <h3 class="title">${escapeHTML(post.title)}</h3>
+        <div class="content">${escapeHTML(post.content)}</div>
+        <button class="copy-button" onclick="copyToClipboard('${escapeHTML(post.content)}'); event.stopPropagation();">복사</button>
+    `;
 
                 outputArea.appendChild(postDiv);
             });
+
         });
     }
 

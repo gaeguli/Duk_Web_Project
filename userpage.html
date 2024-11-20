@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>내 페이지</title>
+  <title>내 페이지 - 내가 쓴 글</title>
   <style>
-
-    body{
+    /* 스타일은 이전 코드와 동일 */
+    body {
       background-color: #f9f9f9;
-    }/* header 스타일 */
+    }
+
     header {
       display: flex;
       justify-content: space-between;
@@ -17,13 +18,11 @@
       color: black;
     }
 
-    /* 햄버거 메뉴 스타일 */
     .hamburger-menu {
       font-size: 24px;
       cursor: pointer;
     }
 
-    /* 기본 메뉴 스타일 (숨김 처리) */
     .menu {
       display: none;
       position: absolute;
@@ -34,12 +33,10 @@
       overflow: hidden;
     }
 
-    /* 메뉴가 활성화되었을 때 */
     .menu.active {
       display: block;
     }
 
-    /* 메뉴 항목 스타일 */
     .menu ul {
       list-style: none;
       margin: 0;
@@ -59,8 +56,30 @@
 
     .menu ul li a:hover {
       background-color: #555;
+      color: white;
     }
 
+    #postsContainer {
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      margin: 20px;
+    }
+
+    .post {
+      border-bottom: 1px solid #ddd;
+      padding: 10px;
+    }
+
+    .post-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .post-content {
+      font-size: 16px;
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -72,17 +91,15 @@
 <nav id="menu" class="menu">
   <ul>
     <li><a href="index.html" onclick="reload()">홈</a></li>
-    <li><a href="#">내 페이지</a></li>
-    <li><a href="login.html">로그인</a></li>
-    <li><a href="login.html">회원가입</a></li>
+    <li><a href="userpage.html">내 페이지</a></li>
+    <li><a href="del2.html">로그인</a></li>
+    <li><a href="del.html">회원가입</a></li>
     <li><a onclick="logout()">로그아웃</a></li>
-    <!--        <div id="loginSection">-->
-
-    <!--        <button onclick="logout()">로그아웃</button>-->
-    </div>
   </ul>
 </nav>
 
+<h2 style="margin-left: 20px;">내가 쓴 글</h2>
+<div id="postsContainer"></div>
 <script>
   function toggleMenu() {
     const menu = document.getElementById("menu");
@@ -91,13 +108,65 @@
 
   function logout() {
     localStorage.removeItem("loggedInUser");
-    window.location.href = "login.html"; // 로그아웃 후 로그인 페이지로 이동
+    window.location.href = "login.html";
   }
 
   function reload() {
     window.location.href = "index.html";
   }
 </script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getDatabase, ref, onValue, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyBrCk-lqrYrwGfj1etOLYInGQkl7Mb_LOs",
+    authDomain: "dukwebproject.firebaseapp.com",
+    databaseURL: "https://dukwebproject-default-rtdb.firebaseio.com",
+    projectId: "dukwebproject",
+    storageBucket: "dukwebproject.firebasestorage.app",
+    messagingSenderId: "278975563652",
+    appId: "1:278975563652:web:23800b058e0980ef30ffd1",
+    measurementId: "G-6HNE4ZDK9P"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+
+
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  const localPart = loggedInUser.split('@')[0];
+  const userId = localPart;
+
+  const postsContainer = document.getElementById("postsContainer");
+
+  // 사용자가 작성한 글 필터링
+  const postsRef = ref(db, 'posts');
+  const userPostsQuery = query(postsRef, orderByChild('userId'), equalTo(userId));
+
+  onValue(userPostsQuery, (snapshot) => {
+    postsContainer.innerHTML = ""; // 기존 게시물 초기화
+    snapshot.forEach((childSnapshot) => {
+      const post = childSnapshot.val();
+
+      // HTML 요소 생성
+      const postElement = document.createElement("div");
+      postElement.classList.add("post");
+
+      const titleElement = document.createElement("div");
+      titleElement.classList.add("post-title");
+      titleElement.innerText = post.title;
+
+      const contentElement = document.createElement("div");
+      contentElement.classList.add("post-content");
+      contentElement.innerText = post.content;
+
+      postElement.appendChild(titleElement);
+      postElement.appendChild(contentElement);
+      postsContainer.appendChild(postElement);
+    });
+  });
+</script>
 </body>
 </html>
