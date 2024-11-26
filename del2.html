@@ -166,27 +166,7 @@
 
   import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-  // document.getElementById("one").addEventListener("click", () => {
-  //   event.preventDefault();
-  //   const email = document.getElementById("username").value;
-  //   const password = document.getElementById("password").value;
     const auth = getAuth();
-  // //   createUserWithEmailAndPassword(auth, email, password)
-  // //           .then((userCredential) => {
-  // //             console.log(userCredential);
-  // //             // Signed in
-  // //
-  // //             const user = userCredential.user;
-  // //             // ...
-  // //           })
-  // //           .catch((error) => {
-  // //             console.log(error);
-  // //             const errorCode = error.code;
-  // //             const errorMessage = error.message;
-  // //             // ..
-  // //           });
-  // //   console.log(email, password)
-  // // })
   document.getElementById("one").addEventListener("click", (event) => {
     event.preventDefault(); // 기본 폼 동작 방지
     const username = document.getElementById("username").value;
@@ -206,7 +186,7 @@
               console.log("User info:", user);
 
               // 리디렉션 예: 메인 페이지로 이동
-              window.location.href = "index.html"; // main.html 파일로 이동 (필요에 따라 변경)
+              window.location.href = "index.html";
             })
             .catch((error) => {
               // 로그인 실패

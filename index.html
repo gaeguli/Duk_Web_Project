@@ -163,7 +163,6 @@
         }
     </style>
 
-    </style>
 </head>
 <body>
 <header>
@@ -186,9 +185,6 @@
         <p id="welcomeMessage"></p>
         <div class="container">
             <h1>글 공유 사이트</h1>
-            <!-- 글 작성 버튼 -->
-            <!-- 글쓰기 팝업 -->
-            <!-- 글 작성 버튼 -->
             <button id="writeButton" class="write-button" onclick="toggleWritePopup()">+</button>
 
             <!-- 글쓰기 팝업 -->
@@ -202,13 +198,6 @@
                     <button onclick="addPost()">등록</button>
                 </div>
             </div>
-
-
-
-            <!--            <input type="text" id="userId" placeholder="아이디를 입력하세요..." disabled />-->
-<!--            <input type="text" id="titleInput" placeholder="제목을 입력하세요..." /><br><br>-->
-<!--            <textarea id="textInput" placeholder="여기에 글을 입력하세요..."></textarea><br>-->
-<!--            <button onclick="addPost()">글 공유하기</button>-->
 
             <h2>목록</h2>
             <div class="output" id="outputArea"></div>
@@ -233,6 +222,7 @@
         window.location.href = "index.html";
     }
 
+
     document.addEventListener("DOMContentLoaded", () => {
         const loggedInUser = localStorage.getItem("loggedInUser");
         const welcomeMessage = document.getElementById("welcomeMessage");
@@ -246,6 +236,7 @@
             document.getElementById("userId").value = localPart;
         }
     });
+
 </script>
 
 <script type="module">
@@ -351,11 +342,6 @@
             alert("복사 실패: " + err.message);
         });
     }
-    // function toggleWritePopup() {
-    //     const popup = document.getElementById('writePopup');
-    //     popup.classList.toggle('show');
-    // }
-
 
     function submitPost() {
         const userId = document.getElementById('userId').value;
