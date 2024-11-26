@@ -243,19 +243,24 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBrCk-lqrYrwGfj1etOLYInGQkl7Mb_LOs",
-        authDomain: "dukwebproject.firebaseapp.com",
-        databaseURL: "https://dukwebproject-default-rtdb.firebaseio.com",
-        projectId: "dukwebproject",
-        storageBucket: "dukwebproject.firebasestorage.app",
-        messagingSenderId: "278975563652",
-        appId: "1:278975563652:web:23800b058e0980ef30ffd1",
-        measurementId: "G-6HNE4ZDK9P"
-    };
+    // Firebase 구성 정보를 JSON 파일에서 불러오기
+    async function fetchFirebaseConfig() {
+        const response = await fetch('./firebase-config.json');
+        const config = await response.json();
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+        return config;
+    }
+
+    // Firebase 초기화 및 데이터베이스 설정
+    async function initializeFirebase() {
+        const firebaseConfig = await fetchFirebaseConfig();
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        window.db = db; // 다른 함수에서도 접근할 수 있도록 설정
+        fetchPosts(); // 초기 글 불러오기
+    }
+
+    initializeFirebase();
 
     window.addPost = function addPost() {
         const userId = document.getElementById('userId').value;

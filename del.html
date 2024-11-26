@@ -142,51 +142,76 @@
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
     import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-    // Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyBrCk-lqrYrwGfj1etOLYInGQkl7Mb_LOs",
-        authDomain: "dukwebproject.firebaseapp.com",
-        databaseURL: "https://dukwebproject-default-rtdb.firebaseio.com",
-        projectId: "dukwebproject",
-        storageBucket: "dukwebproject.firebasestorage.app",
-        messagingSenderId: "278975563652",
-        appId: "1:278975563652:web:23800b058e0980ef30ffd1",
-        measurementId: "G-6HNE4ZDK9P"
-    };
+    // Firebase 설정 정보를 JSON 파일로 분리하여 불러오기
+    async function fetchFirebaseConfig() {
+        const response = await fetch('./firebase-config.json'); // JSON 파일 경로
+        const config = await response.json();
+        return config;
+    }
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+    // Firebase 초기화
+    async function initializeFirebase() {
+        const firebaseConfig = await fetchFirebaseConfig();
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        console.log("Firebase initialized:", app);
+
+        // 회원가입 이벤트 리스너 등록
+        setupSignUpEvent();
+    }
 
     // 회원가입 로직
-    document.getElementById("one").addEventListener("click", (event) => {
-        event.preventDefault();
-        const email = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-        const auth = getAuth();
+    function setupSignUpEvent() {
+        const signUpButton = document.getElementById("one");
+        if (!signUpButton) {
+            console.error("회원가입 버튼을 찾을 수 없습니다.");
+            return;
+        }
 
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // 회원가입 성공
-                console.log(userCredential);
-                alert("회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.");
-                window.location.href = "del2.html"; // 로그인 페이지로 리디렉션
-            })
-            .catch((error) => {
-                // 에러 처리
-                if (error.code === 'auth/email-already-in-use') {
-                    alert('이미 사용 중인 이메일 주소입니다. 다른 이메일을 사용하세요.');
-                } else if (error.code === 'auth/invalid-email') {
-                    alert('유효하지 않은 이메일 주소입니다.');
-                } else if (error.code === 'auth/weak-password') {
-                    alert('비밀번호는 6자 이상이어야 합니다.');
-                } else {
-                    alert(`회원가입 실패: ${error.message}`);
-                }
-            });
-    });
+        signUpButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            const email = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const auth = getAuth();
 
+            if (!email || !password) {
+                alert("이메일과 비밀번호를 입력하세요.");
+                return;
+            }
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // 회원가입 성공
+                    console.log(userCredential);
+                    alert("회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.");
+                    window.location.href = "del2.html"; // 로그인 페이지로 리디렉션
+                })
+                .catch((error) => {
+                    // 에러 처리
+                    handleSignUpError(error);
+                });
+        });
+    }
+
+    // 에러 처리
+    function handleSignUpError(error) {
+        switch (error.code) {
+            case 'auth/email-already-in-use':
+                alert('이미 사용 중인 이메일 주소입니다. 다른 이메일을 사용하세요.');
+                break;
+            case 'auth/invalid-email':
+                alert('유효하지 않은 이메일 주소입니다.');
+                break;
+            case 'auth/weak-password':
+                alert('비밀번호는 6자 이상이어야 합니다.');
+                break;
+            default:
+                alert(`회원가입 실패: ${error.message}`);
+        }
+    }
+
+    // 초기화 실행
+    initializeFirebase();
 </script>
-
 </body>
 </html>

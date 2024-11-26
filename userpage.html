@@ -119,54 +119,69 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getDatabase, ref, onValue, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBrCk-lqrYrwGfj1etOLYInGQkl7Mb_LOs",
-    authDomain: "dukwebproject.firebaseapp.com",
-    databaseURL: "https://dukwebproject-default-rtdb.firebaseio.com",
-    projectId: "dukwebproject",
-    storageBucket: "dukwebproject.firebasestorage.app",
-    messagingSenderId: "278975563652",
-    appId: "1:278975563652:web:23800b058e0980ef30ffd1",
-    measurementId: "G-6HNE4ZDK9P"
-  };
+  // Firebase 구성 정보를 JSON 파일에서 불러오기
+  async function fetchFirebaseConfig() {
+    const response = await fetch('./firebase-config.json'); // JSON 파일 경로
+    const config = await response.json();
+    return config;
+  }
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+  // Firebase 초기화 및 데이터베이스 설정
+  async function initializeFirebase() {
+    const firebaseConfig = await fetchFirebaseConfig();
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    window.db = db; // 다른 함수에서도 접근할 수 있도록 설정
+    fetchUserPosts(); // 사용자 게시글 가져오기
+  }
 
+  // 로그인된 사용자 정보 가져오기
+  function getLoggedInUserId() {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (!loggedInUser) {
+      console.error("로그인된 사용자가 없습니다.");
+      return null;
+    }
+    const localPart = loggedInUser.split('@')[0];
+    return localPart;
+  }
 
+  // 사용자 게시글 가져오기
+  function fetchUserPosts() {
+    const userId = getLoggedInUserId();
+    if (!userId) return;
 
-  const loggedInUser = localStorage.getItem("loggedInUser");
-  const localPart = loggedInUser.split('@')[0];
-  const userId = localPart;
+    const postsContainer = document.getElementById("postsContainer");
+    const postsRef = ref(window.db, 'posts');
+    const userPostsQuery = query(postsRef, orderByChild('userId'), equalTo(userId));
 
-  const postsContainer = document.getElementById("postsContainer");
+    onValue(userPostsQuery, (snapshot) => {
+      postsContainer.innerHTML = ""; // 기존 게시물 초기화
+      snapshot.forEach((childSnapshot) => {
+        const post = childSnapshot.val();
 
-  // 사용자가 작성한 글 필터링
-  const postsRef = ref(db, 'posts');
-  const userPostsQuery = query(postsRef, orderByChild('userId'), equalTo(userId));
+        // HTML 요소 생성
+        const postElement = document.createElement("div");
+        postElement.classList.add("post");
 
-  onValue(userPostsQuery, (snapshot) => {
-    postsContainer.innerHTML = ""; // 기존 게시물 초기화
-    snapshot.forEach((childSnapshot) => {
-      const post = childSnapshot.val();
+        const titleElement = document.createElement("div");
+        titleElement.classList.add("post-title");
+        titleElement.innerText = post.title;
 
-      // HTML 요소 생성
-      const postElement = document.createElement("div");
-      postElement.classList.add("post");
+        const contentElement = document.createElement("div");
+        contentElement.classList.add("post-content");
+        contentElement.innerText = post.content;
 
-      const titleElement = document.createElement("div");
-      titleElement.classList.add("post-title");
-      titleElement.innerText = post.title;
-
-      const contentElement = document.createElement("div");
-      contentElement.classList.add("post-content");
-      contentElement.innerText = post.content;
-
-      postElement.appendChild(titleElement);
-      postElement.appendChild(contentElement);
-      postsContainer.appendChild(postElement);
+        postElement.appendChild(titleElement);
+        postElement.appendChild(contentElement);
+        postsContainer.appendChild(postElement);
+      });
     });
-  });
+  }
+
+  // 초기화
+  initializeFirebase();
 </script>
+
 </body>
 </html>

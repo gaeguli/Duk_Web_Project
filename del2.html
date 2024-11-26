@@ -140,89 +140,69 @@
 
 
 <script type="module">
-  // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBrCk-lqrYrwGfj1etOLYInGQkl7Mb_LOs",
-    authDomain: "dukwebproject.firebaseapp.com",
-    databaseURL: "https://dukwebproject-default-rtdb.firebaseio.com",
-    projectId: "dukwebproject",
-    storageBucket: "dukwebproject.firebasestorage.app",
-    messagingSenderId: "278975563652",
-    appId: "1:278975563652:web:23800b058e0980ef30ffd1",
-    measurementId: "G-6HNE4ZDK9P"
-  };
+  // Firebase 설정 정보를 JSON 파일에서 가져오기
+  async function fetchFirebaseConfig() {
+    const response = await fetch('./firebase-config.json'); // JSON 파일 경로
+    const config = await response.json();
+    return config;
+  }
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-
-
-  import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
+  // Firebase 초기화
+  async function initializeFirebase() {
+    const firebaseConfig = await fetchFirebaseConfig();
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
     const auth = getAuth();
-  document.getElementById("one").addEventListener("click", (event) => {
-    event.preventDefault(); // 기본 폼 동작 방지
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+    console.log("Firebase initialized:", app);
 
-    if (!username || !password) {
-      alert("아이디와 비밀번호를 입력하세요.");
+    // 로그인 이벤트 리스너 등록
+    setupLoginEvent(auth);
+  }
+
+  // 로그인 이벤트 처리
+  function setupLoginEvent(auth) {
+    const loginButton = document.getElementById("one");
+    if (!loginButton) {
+      console.error("로그인 버튼을 찾을 수 없습니다.");
       return;
     }
 
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, username, password)
-            .then((userCredential) => {
-              // 로그인 성공
-              const user = userCredential.user;
-              alert("로그인 성공!");
-              console.log("User info:", user);
+    loginButton.addEventListener("click", (event) => {
+      event.preventDefault(); // 기본 폼 동작 방지
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
 
-              // 리디렉션 예: 메인 페이지로 이동
-              window.location.href = "index.html";
-            })
-            .catch((error) => {
-              // 로그인 실패
-              console.error("로그인 실패:", error);
-              alert(`로그인 실패: ${error.message}`);
-            });
-  });
+      if (!username || !password) {
+        alert("아이디와 비밀번호를 입력하세요.");
+        return;
+      }
 
+      // Firebase 인증: 이메일 및 비밀번호 로그인
+      signInWithEmailAndPassword(auth, username, password)
+              .then((userCredential) => {
+                const user = userCredential.user;
 
+                // 이메일 저장
+                localStorage.setItem("loggedInUser", user.email);
 
+                // 리디렉션 예: 메인 페이지로 이동
+                alert("로그인 성공!");
+                window.location.href = "index.html";
+              })
+              .catch((error) => {
+                console.error("로그인 실패:", error);
+                alert(`로그인 실패: ${error.message}`);
+              });
+    });
+  }
 
-  console.log(app)
-
-  document.getElementById("one").addEventListener("click", (event) => {
-    event.preventDefault();
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    signInWithEmailAndPassword(auth, username, password)
-            .then((userCredential) => {
-              // 로그인 성공
-              const user = userCredential.user;
-
-              // 이메일 저장
-              localStorage.setItem("loggedInUser", user.email);
-
-              // 홈 페이지로 이동
-              alert("로그인 성공!");
-              window.location.href = "index.html";
-            })
-            .catch((error) => {
-              console.error(error);
-              alert("로그인 실패: " + error.message);
-            });
-  });
-
+  // 초기화 실행
+  initializeFirebase();
 </script>
+
 </body>
 </html>
