@@ -120,7 +120,7 @@
 <body>
 <div class="container">
     <h2>회원가입</h2>
-    <!-- 로그인 폼 -->
+    <!-- 회원가입 폼 -->
     <form id="loginForm">
         <div class="input-container">
             <input type="text" id="username" name="username" required>
@@ -134,8 +134,14 @@
         </div>
         <button type="button" id="one">회원가입</button>
     </form>
+    <!-- 하이퍼링크 추가 -->
+    <p>
+        이미 계정이 있으신가요?
+        <a href="signin.html">로그인</a>
+    </p>
     <p id="loginStatus"></p>
 </div>
+
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";

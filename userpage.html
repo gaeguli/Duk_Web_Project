@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>내 페이지 - 내가 쓴 글</title>
   <style>
-    /* 스타일은 이전 코드와 동일 */
     body {
       background-color: #f9f9f9;
     }
@@ -80,6 +79,59 @@
       font-size: 16px;
       color: #555;
     }
+
+    .post-buttons {
+      margin-top: 10px;
+    }
+
+    .post-buttons button {
+      margin-right: 5px;
+      padding: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* 모달 스타일 */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      width: 300px;
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+
+    .modal-content button {
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    .modal-content .close {
+      background-color: red;
+      color: white;
+      float: right;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -100,6 +152,18 @@
 
 <h2 style="margin-left: 20px;">내가 쓴 글</h2>
 <div id="postsContainer"></div>
+
+<!-- 모달 창 -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">×</span>
+    <h3>게시글 수정</h3>
+    <input type="text" id="editTitle" placeholder="새 제목 입력">
+    <input type="text" id="editContent" placeholder="새 내용 입력">
+    <button onclick="saveEdit()">저장</button>
+  </div>
+</div>
+
 <script>
   function toggleMenu() {
     const menu = document.getElementById("menu");
@@ -114,28 +178,45 @@
   function reload() {
     window.location.href = "index.html";
   }
+
+  let editingPostId = null;
+
+  function openModal(postId, currentTitle, currentContent) {
+    editingPostId = postId;
+    document.getElementById("editTitle").value = currentTitle;
+    document.getElementById("editContent").value = currentContent;
+    document.getElementById("editModal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("editModal").style.display = "none";
+    editingPostId = null;
+  }
+
+
+
+
 </script>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getDatabase, ref, onValue, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+  import { getDatabase, ref, onValue, query, orderByChild, equalTo, remove, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-  // Firebase 구성 정보를 JSON 파일에서 불러오기
   async function fetchFirebaseConfig() {
     const response = await fetch('./firebase-config.json'); // JSON 파일 경로
     const config = await response.json();
     return config;
   }
 
-  // Firebase 초기화 및 데이터베이스 설정
   async function initializeFirebase() {
-    const firebaseConfig = await fetchFirebaseConfig();
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    window.db = db; // 다른 함수에서도 접근할 수 있도록 설정
-    fetchUserPosts(); // 사용자 게시글 가져오기
+    const firebaseConfig = await fetchFirebaseConfig(); // Firebase 구성 가져오기
+    const app = initializeApp(firebaseConfig); // Firebase 앱 초기화
+    const db = getDatabase(app); // Firebase 데이터베이스 가져오기
+    window.db = db; // 글로벌로 저장
+    fetchUserPosts()
   }
 
-  // 로그인된 사용자 정보 가져오기
+
   function getLoggedInUserId() {
     const loggedInUser = localStorage.getItem("loggedInUser");
     if (!loggedInUser) {
@@ -146,7 +227,37 @@
     return localPart;
   }
 
-  // 사용자 게시글 가져오기
+
+  window.saveEdit = function saveEdit() {
+    const newTitle = document.getElementById("editTitle").value.trim();
+    const newContent = document.getElementById("editContent").value.trim();
+
+    if (!newTitle || !newContent) {
+      alert("제목과 내용을 모두 입력해주세요.");
+      return;
+    }
+
+    if (!window.db) {
+      console.error("Firebase 데이터베이스가 초기화되지 않았습니다.");
+      alert("시스템 오류가 발생했습니다. 다시 시도해주세요.");
+      return;
+    }
+
+    const postRef = ref(window.db, `posts/${editingPostId}`);
+    const updates = { title: newTitle, content: newContent };
+
+    update(postRef, updates)
+            .then(() => {
+              alert("게시글이 수정되었습니다.");
+              closeModal();
+            })
+            .catch((error) => {
+              console.error("수정 중 오류가 발생했습니다:", error);
+              alert("수정에 실패했습니다. 다시 시도해주세요.");
+            });
+  };
+
+
   function fetchUserPosts() {
     const userId = getLoggedInUserId();
     if (!userId) return;
@@ -159,8 +270,8 @@
       postsContainer.innerHTML = ""; // 기존 게시물 초기화
       snapshot.forEach((childSnapshot) => {
         const post = childSnapshot.val();
+        const postId = childSnapshot.key; // 게시글 고유 키
 
-        // HTML 요소 생성
         const postElement = document.createElement("div");
         postElement.classList.add("post");
 
@@ -172,16 +283,46 @@
         contentElement.classList.add("post-content");
         contentElement.innerText = post.content;
 
+        const buttonsContainer = document.createElement("div");
+        buttonsContainer.classList.add("post-buttons");
+
+        const editButton = document.createElement("button");
+        editButton.innerText = "수정";
+        editButton.onclick = () => openModal(postId, post.title, post.content);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.innerText = "삭제";
+        deleteButton.onclick = () => deletePost(postId);
+
+        buttonsContainer.appendChild(editButton);
+        buttonsContainer.appendChild(deleteButton);
+
         postElement.appendChild(titleElement);
         postElement.appendChild(contentElement);
+        postElement.appendChild(buttonsContainer);
+
         postsContainer.appendChild(postElement);
       });
     });
   }
 
-  // 초기화
+  function deletePost(postId) {
+    const postsRef = ref(window.db, `posts/${postId}`);
+    if (confirm("정말 이 게시글을 삭제하시겠습니까?")) {
+      remove(postsRef)
+              .then(() => {
+                alert("게시글이 삭제되었습니다.");
+              })
+              .catch((error) => {
+                console.error("삭제 중 오류가 발생했습니다:", error);
+              });
+    }
+  }
+
+
+
+
   initializeFirebase();
 </script>
-
 </body>
 </html>
