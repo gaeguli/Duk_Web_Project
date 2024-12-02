@@ -8,7 +8,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0px;
+            padding: 0px;
             background-color: #f9f9f9;
         }
         .container {
@@ -170,6 +171,9 @@
         .write-popup button:hover {
             background-color: #0056b3;
         }
+        header {
+            background-color: #277EE2;
+        }
     </style>
     <style>
         @font-face {
@@ -199,7 +203,7 @@
 
 <main>
     <article>
-        <p id="welcomeMessage"></p>
+        <p id="welcomeMessage" style="margin: 10px"></p>
         <div class="container">
             <h1>글 공유 사이트</h1>
             <button id="writeButton" class="write-button" onclick="toggleWritePopup()">+</button>
