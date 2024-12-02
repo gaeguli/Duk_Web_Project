@@ -23,12 +23,20 @@
             text-align: center;
         }
         input, textarea {
-            width: 100%;
+            width: 100%; /* 부모 요소의 너비를 채우도록 설정 */
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             padding: 10px;
+            box-sizing: border-box; /* padding과 border를 포함하여 크기를 계산 */
+            font-size: 16px; /* 입력 텍스트 크기를 조정 */
         }
+
+        textarea {
+            min-height: 120px; /* 입력 창의 최소 높이를 설정 */
+            resize: vertical; /* 세로 크기 조정만 허용 */
+        }
+
         button {
             padding: 10px;
             font-size: 16px;
