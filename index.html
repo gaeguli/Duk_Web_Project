@@ -90,21 +90,22 @@
             display: none;
         }
              /* 글 작성 버튼 */
-         .write-button {
-             position: fixed;
-             bottom: 20px;
-             right: 20px;
-             background-color: #007BFF;
-             color: white;
-             border: none;
-             border-radius: 50%;
-             width: 60px;
-             height: 60px;
-             font-size: 24px;
-             cursor: pointer;
-             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-             transition: background-color 0.3s ease;
-         }
+        .write-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+            z-index: 9999; /* 가장 앞으로 오도록 설정 */
+        }
 
         .write-button:hover {
             background-color: #0056b3;
@@ -121,12 +122,12 @@
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
+            z-index: 10000; /* 팝업이 버튼보다 위에 표시되도록 설정 */
             display: none; /* 기본적으로 숨김 */
         }
 
-        .write-popup {
-            display: none;
+        .write-popup.show {
+            display: block;
         }
 
         .write-popup.show {
