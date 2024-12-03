@@ -132,8 +132,9 @@
             <label for="password">비밀번호</label>
             <span></span>
         </div>
-        <button type="button" id="one">회원가입</button>
+        <button type="submit" id="one">회원가입</button> <!-- type을 submit으로 변경 -->
     </form>
+
     <!-- 하이퍼링크 추가 -->
     <p>
         이미 계정이 있으신가요?
@@ -167,15 +168,17 @@
     }
 
     // 회원가입 로직
+    // 회원가입 로직
     function setupSignUpEvent() {
-        const signUpButton = document.getElementById("one");
-        if (!signUpButton) {
-            console.error("회원가입 버튼을 찾을 수 없습니다.");
+        const signUpForm = document.getElementById("loginForm");
+        if (!signUpForm) {
+            console.error("회원가입 폼을 찾을 수 없습니다.");
             return;
         }
 
-        signUpButton.addEventListener("click", (event) => {
-            event.preventDefault();
+        // 폼의 submit 이벤트를 처리
+        signUpForm.addEventListener("submit", (event) => {
+            event.preventDefault(); // 기본 폼 제출 동작 방지
             const email = document.getElementById("username").value;
             const password = document.getElementById("password").value;
             const auth = getAuth();
@@ -198,6 +201,7 @@
                 });
         });
     }
+
 
     // 에러 처리
     function handleSignUpError(error) {

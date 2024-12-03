@@ -132,8 +132,9 @@
       <label for="password">비밀번호</label>
       <span></span>
     </div>
-    <button type="button" id="one">로그인</button>
+    <button type="submit">로그인</button> <!-- type을 submit으로 변경 -->
   </form>
+
   <p id="loginStatus"></p>
       <p>계정이 없으신가요? <a href="signup.html">회원가입</a></p>
 </div>
@@ -165,14 +166,14 @@
 
   // 로그인 이벤트 처리
   function setupLoginEvent(auth) {
-    const loginButton = document.getElementById("one");
-    if (!loginButton) {
-      console.error("로그인 버튼을 찾을 수 없습니다.");
+    const loginForm = document.getElementById("loginForm");
+    if (!loginForm) {
+      console.error("로그인 폼을 찾을 수 없습니다.");
       return;
     }
 
-    loginButton.addEventListener("click", (event) => {
-      event.preventDefault(); // 기본 폼 동작 방지
+    loginForm.addEventListener("submit", (event) => {
+      event.preventDefault(); // 기본 폼 제출 방지
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
 
@@ -199,6 +200,7 @@
               });
     });
   }
+
 
   // 초기화 실행
   initializeFirebase();
