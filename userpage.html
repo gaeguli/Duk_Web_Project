@@ -185,7 +185,8 @@
   </ul>
 </nav>
 
-<h2 style="margin-left: 20px;">내가 쓴 글</h2>
+<h2 id="writtenBy" style="margin-left: 20px;">내가 쓴 글</h2>
+
 <div id="postsContainer"></div>
 
 <!-- 모달 창 -->
@@ -227,6 +228,19 @@
     document.getElementById("editModal").style.display = "none";
     editingPostId = null;
   }
+  document.addEventListener("DOMContentLoaded", () => {
+    // 로그인된 유저의 이메일을 가져옴
+    const loggedInUser = localStorage.getItem("loggedInUser");
+
+    if (loggedInUser) {
+      // 이메일에서 "@" 앞부분 추출
+      const usernamePart = loggedInUser.split('@')[0];
+
+      // 해당 부분을 HTML에 반영
+      const writtenByElement = document.getElementById("writtenBy");
+      writtenByElement.textContent = `${usernamePart}님이 쓴 글`;
+    }
+  });
 
 
 
