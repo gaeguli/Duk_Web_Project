@@ -187,9 +187,13 @@
 </head>
 <body>
 <header>
-    <h2 onclick="reload()" style="font-family: KCC-Ganpan">Text Share</h2>
-    <div class="hamburger-menu" onclick="toggleMenu()">☰</div>
+    <h2 onclick="reload()" style="font-family: KCC-Ganpan; margin-left: 15px; color: white">Text Share</h2>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <p id="welcomeMessage" style="margin: 10px; color: white;">환영합니다!</p>
+        <div class="hamburger-menu" onclick="toggleMenu()" style="margin-right: 10px;">☰</div>
+    </div>
 </header>
+
 
 <nav id="menu" class="menu">
     <ul>
@@ -203,7 +207,7 @@
 
 <main>
     <article>
-        <p id="welcomeMessage" style="margin: 10px"></p>
+
         <div class="container">
             <h1>글 공유 사이트</h1>
             <button id="writeButton" class="write-button" onclick="toggleWritePopup()">+</button>
